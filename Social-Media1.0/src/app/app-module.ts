@@ -3,15 +3,12 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
-import { Posts } from './posts/posts';
-
-
+import { UserDataComponent } from './user-data/user-data.component';
 
 @NgModule({
   declarations: [
     App,
-    Posts,
-   
+    UserDataComponent
   ],
   imports: [
     BrowserModule,

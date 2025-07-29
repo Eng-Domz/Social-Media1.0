@@ -90,5 +90,26 @@
             "comments": [],
             "imgUrl": ""
         }
+    ],
+    "users": [
+        {
+            "id": 1,
+            "name": "Adham",
+            "password": "password",
+            "profilePic": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
+        },
+        {
+            "id": 2,
+            "name": "Nadine",
+            "password": "password",
+            "profilePic": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
+        },
+        {
+            "id": 3,
+            "name": "Mohamed",
+            "password": "password",
+            "profilePic": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
+        }
+        
     ]
 }
