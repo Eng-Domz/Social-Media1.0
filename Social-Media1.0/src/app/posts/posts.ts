@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { Post } from '../models/post.model';
 import { PostService } from '../services/post-service';
 import { Observable } from 'rxjs';
-import {Comment} from '../models/comment.model';
+import { Comment } from '../models/comment.model';
+import { UserService } from '../services/user-service';
 
 @Component({
   selector: 'app-posts',
@@ -12,10 +13,9 @@ import {Comment} from '../models/comment.model';
 })
 export class Posts {
   posts: Post[] = [];
-
   newPost: Post = {
     id: 0,
-    userid: this.user?.id || 1,
+    userid: this.getCurrentUserId(),
     title: '',
     body: '',
     date: new Date(),
@@ -24,11 +24,18 @@ export class Posts {
     imgUrl: ''
   }
 
-  constructor(private postService: PostService) { }
+  constructor(private postService: PostService, private userService: UserService) {
+
+  }
 
   ngOnInit(): void {
     this.postService.getApiPosts()
+
   }
+
+
+
+
   deletePost(id: number): void {
     this.postService.deleteApiPost(id).subscribe(() => {
       this.postService.getApiPosts()
@@ -36,19 +43,19 @@ export class Posts {
   }
 
   addPost(): void {
-    this.postService.addApiPost({ ...this.newPost }).subscribe(() => {
+    this.postService.addApiPost(this.newPost).subscribe(() => {
       this.postService.getApiPosts()
     })
 
 
   }
 
-  updatePost(id:number, post:Post): void {
-    this.postService.updateApiPost(id,post).subscribe(()=>{
+  updatePost(id: number, post: Post): void {
+    this.postService.updateApiPost(id, post).subscribe(() => {
       this.postService.getApiPosts()
     })
   }
-  
+
   toggleLike(postId: number): void {
     const like = document.getElementById(postId.toString()) as HTMLElement; //add id for likes
     if (like) {
@@ -58,7 +65,7 @@ export class Posts {
     }
   }
 
-  showComments(postId: number): Observable <Comment[]>{
+  showComments(postId: number): Observable<Comment[]> {
     return this.postService.getApiComments(postId)
   }
 
@@ -73,7 +80,7 @@ export class Posts {
   }
 
   getCurrentUserId(): number {
-    const loggedUser = this.userService.getLoggedUser();
+    const loggedUser = this.userService.getLoggedInUser();
     return loggedUser?.id ?? 1;
   }
 
