@@ -12,6 +12,7 @@ export class LoginGuard implements CanActivate {
     const loggedInUser = this.userService.getLoggedInUser();
     
     if (loggedInUser) {
+      console.log('User is already logged in');
       this.router.navigate(['/']); 
       return false; 
     } else {

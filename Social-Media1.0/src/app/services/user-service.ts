@@ -37,8 +37,19 @@ export class UserService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  login(userName: string, password: string): Observable<User> | null {
-    return this.http.get<User>(`${this.apiUrl}?userName=${userName}&password=${password}`);
+  // Mock users for client-side authentication
+  private mockUsers: User[] = [
+    { id: 1, name: 'adham', password: '123456', profilePic: '' },
+    { id: 2, name: 'ahmed', password: '123456', profilePic: '' }
+  ];
+
+  login(userName: string, password: string): User | null {
+    const user = this.mockUsers.find(u => u.name === userName && u.password === password);
+    if (user) {
+      return user;
+    } else {
+      return null;
+    }
   }
 
   logout(): void {

@@ -2,7 +2,7 @@
     "posts": [
         {
             "id": "9",
-            "userid": 3,
+            "userid": 1,
             "title": "Chronicles of Eloria",
             "body": "Elves, dwarves, and a hero with a secret past.",
             "date": "2024-06-01T00:00:00Z",
@@ -12,7 +12,7 @@
         },
         {
             "id": "10",
-            "userid": 4,
+            "userid": 2,
             "title": "Moonlight Sorcery",
             "body": "A spell gone wrong, and a world in peril.",
             "date": "2024-06-01T00:00:00Z",

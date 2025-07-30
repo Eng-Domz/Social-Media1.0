@@ -11,10 +11,10 @@ export class AuthGuard implements CanActivate {
   canActivate(): boolean {
       const loggedInUser = this.userService.getLoggedInUser();
 
-      if (!loggedInUser) {
-        this.router.navigate(['/login']);
-        return false;
+      if (loggedInUser !== null) {
+        return true;
       }
-      return true;
+      this.router.navigate(['/login']);
+      return false;
   }
 }
