@@ -1,1 +1,8 @@
-<p>user-data works!</p>
+<div class="user d-flex align-items-center position-relative" >
+    <img [src]="user?.profilePic" class="imgg rounded-circle" width="50" height="50">
+    <div class="ms-2">
+        <p class="mb-0 fw-bold">{{user?.name}}</p>
+        <p class="mb-0 fw-light small">{{date | date:"short"}}</p>
+    </div>
+    <!-- <i class="fa-solid fa-xmark position-absolute end-0 text-muted " style="font-size: 20px; cursor: pointer;"></i> -->
+</div> 

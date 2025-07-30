@@ -1,1 +1,135 @@
-<p>posts works!</p>
+<div class="posts d-flex flex-column justify-content-center align-items-center p-5">
+    <div class="w-100 d-flex justify-content-center mb-4">
+        <div class="card p-3 d-flex flex-row align-items-center gap-2" style="width: 100%; max-width: 600px;">
+            <img class="rounded-circle" width="50" height="50" [src]="getLoggedUser()?.profilePic" alt="User Image">
+
+            <input type="text" class="f1 form-control rounded-5 p-2" style="cursor: pointer;"
+                placeholder="What's on your mind?" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        </div>
+    </div>
+
+
+    <div class="container" *ngIf="posts.length > 0">
+        <div *ngFor="let post of posts" class="w-100 d-flex justify-content-center mb-4">
+            <div class="card rounded-3 border-1 shadow-sm p-2 " style="width: 100%; max-width: 600px;">
+                <app-user-data [userid]="post.userid" [date]="post.date"></app-user-data>
+                <div class="card-body">
+                    <p class="card-title fw-bold">{{ post.title }}</p>
+                    <p class="card-text">{{ post.body }}</p>
+                </div>
+                <img [src]="post.imgUrl" class="card-img-top">
+
+                <hr class="m-0">
+                <div class="d-flex flex-row">
+                    <button type="button" class="btn w-100 rounded-1" (click)="toggleLike(post)"
+                        [ngStyle]="{'color': post.liked? '#0d6efd' : ''}">
+                        <i [ngClass]="post.liked ? 'fa-solid fa-thumbs-up' : 'fa-regular fa-thumbs-up'" id="postId"></i>
+                        Like</button>
+                    <button type="button" class="btn w-100 rounded-1" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdropComm" (click)="selectedPost=post">
+                        <i class="fa-regular fa-comment fa-rotate-270"></i>
+                        Comment</button>
+                </div>
+                <hr class="m-0">
+
+                <div class="likecomm  d-flex justify-content-between p-1">
+                    <div class="likes fw-light">
+                        <i [ngClass]="post.liked ? 'fa-solid fa-thumbs-up' : 'fa-regular fa-thumbs-up'"
+                            [ngStyle]="{'color': post.liked? '#0d6efd' : ''}"></i>{{post.likes}}
+                    </div>
+                    <div class="comms" id="comment">
+                        {{post.comments.length}} comments
+                    </div>
+                </div>
+
+                <div class="comments mt-3" *ngFor="let comm of post.comments">
+                    <div class="user d-flex align-items-center position-relative">
+                        <img [src]="getLoggedUser()?.profilePic" class="imgg rounded-circle" width="40" height="40">
+                        <div class="ms-2 bg-light w-100 rounded-1 p-1">
+                            <p class="mb-0 fw-bold">{{getLoggedUser()?.name}}</p>
+                            <div class=" ">
+                                {{comm}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Modal for add posts -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Post</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form #myForm="ngForm" (ngSubmit)="addPost()" class="modal-body">
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" [(ngModel)]="newPost.title"
+                        required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="body" class="form-label">Body</label>
+                    <input type="text" class="form-control" id="body" name="body" [(ngModel)]="newPost.body" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="id" class="form-label">ID</label>
+                    <input type="number" class="form-control" id="id" name="id" [(ngModel)]="newPost.userid" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="img" class="form-label">img Url</label>
+                    <input type="url" class="form-control" id="imgUrl" name="imgUrl" [(ngModel)]="newPost.imgUrl" />
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary w-100" [disabled]="myForm.invalid"
+                        data-bs-dismiss="modal" aria-label="Close">Post</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal for comments -->
+<div class="comm modal fade" id="staticBackdropComm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Comment</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="modal-body">
+                <div class="mb-3">
+                    <textarea class="form-control " rows="3" id="comment" name="comment"
+                        placeholder="Add your comment"></textarea>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="submit" class="btn p-0 border-0 bg-transparent" data-bs-dismiss="modal" (click)="addComment()">
+
+                    <i class="fa-regular fa-paper-plane fa-rotate-by fa-xl mb-3 mt-3"
+                        style="--fa-rotate-angle: 45deg; cursor: pointer;" >
+                    </i>
+
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

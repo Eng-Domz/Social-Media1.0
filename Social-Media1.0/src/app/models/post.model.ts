@@ -5,6 +5,7 @@ export interface Post{
     body:string
     date: Date
     likes:number
+    liked: boolean
     comments:string[]
     imgUrl:string
 }
