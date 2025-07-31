@@ -1,0 +1,65 @@
+# Environment files (IMPORTANT: Contains sensitive data)
+backend/config.env
+.env
+.env.local
+.env.production
+.env.development
+
+# Backend dependencies and files
+backend/node_modules/
+backend/npm-debug.log
+backend/yarn-error.log
+backend/dist/
+backend/build/
+
+# Frontend dependencies and files  
+Social-Media1.0/node_modules/
+Social-Media1.0/dist/
+Social-Media1.0/tmp/
+Social-Media1.0/out-tsc/
+Social-Media1.0/bazel-out/
+Social-Media1.0/.angular/cache
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity 

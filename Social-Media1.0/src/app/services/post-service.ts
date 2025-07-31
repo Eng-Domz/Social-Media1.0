@@ -32,25 +32,44 @@ export class PostService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  getApiComments(cardId:number): Observable<Comment[]> { //make separate commentService
-    return this.http.get<Comment[]>(`${this.apiUrl}/${cardId}/comments`);
+  getApiComments(postId:number): Observable<Comment[]> { //make separate commentService
+    return this.http.get<Comment[]>(`${this.apiUrl}/${postId}/comments`);
   }
 
-  addApiComment(postId:number, comment:string, userId:number): void{
-    this.http.post<Comment>(`${this.apiUrl}/${postId}/comments`, {
-      id: this.getApiComments(postId).subscribe((comments) => {return comments.length + 1;}),
+  addApiComment(postId: number, comment: string, userId: number): void {
+  this.getApiComments(postId).subscribe((comments) => {
+    const newComment: Comment = {
+      id: comments.length + 1, // or better: use backend auto-increment
       userId: userId,
       postId: postId,
       content: comment,
       createdAt: new Date().toISOString()
-    });
+    };
+
+    this.http.post<Comment>(`${this.apiUrl}/${postId}/comments`, newComment).subscribe();
+  });
+}
+// addApiComment(postId: number, content: string, userId: number): Observable<any> {
+//   const commentData = {
+//     content,
+//     userId,
+//     postId
+//   };
+
+//   return this.http.post(`${this.apiUrl}/${postId}/comments`, commentData);
+// }
+
+
+
+  getApiLikes(postId:number): Observable<number> { //separate likes service
+    return this.http.get<number>(`${this.apiUrl}/${postId}/likes`);
+  }
+  addApiLike(postId:number): Observable<number> {
+    return this.http.post<number>(`${this.apiUrl}/${postId}/likes`, {});
   }
 
-  getApiLikes(cardId:number): Observable<number> { //separate likes service
-    return this.http.get<number>(`${this.apiUrl}/${cardId}/likes`);
-  }
-  addApiLike(cardId:number): Observable<number> {
-    return this.http.post<number>(`${this.apiUrl}/${cardId}/likes`, {});
+  removeApiLike(postId:number){
+    return this.http.delete<number>(`${this.apiUrl}/${postId}/likes`, {});
   }
 
 

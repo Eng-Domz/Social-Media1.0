@@ -1,0 +1,26 @@
+.card{
+    max-width: 600px !important;
+}
+
+.btn:hover{
+    background-color: #ccc;
+}
+
+.form-control{
+   outline: none !important;
+   box-shadow: none;
+   border-color:transparent ;
+   background-color:rgba(230, 223, 232, 0.704) ;
+}
+
+.f1:hover{
+    background-color:rgba(213, 208, 214, 0.704);
+}
+
+.btn-close{
+    box-shadow: none;
+}
+
+.comments{
+    font-size:0.8rem ;
+}

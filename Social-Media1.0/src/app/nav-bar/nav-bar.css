@@ -1,0 +1,18 @@
+
+.navbar {
+  background-color: #6d4c6c;
+  
+}
+
+.navbar-nav .nav-item .nav-link,
+.navbar-nav .nav-item button.nav-link
+{
+  color: white !important;
+  text-decoration: none;
+  font-size: 16px;
+  
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+    border-radius: 4px;
+}
+

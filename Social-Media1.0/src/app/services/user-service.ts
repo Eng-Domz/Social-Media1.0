@@ -66,9 +66,10 @@ export class UserService {
   }
 
   setLoggedInUser(user: User): void {
-    this.loggedInUser = user;
+    this.loggedInUser = user; 
     localStorage.setItem('user', JSON.stringify(user));
   }
+  
 
 
 }

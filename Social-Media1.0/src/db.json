@@ -1,115 +1,142 @@
 {
     "posts": [
         {
-            "id": "9",
+            "id": 1,
             "userid": 1,
             "title": "Chronicles of Eloria",
             "body": "Elves, dwarves, and a hero with a secret past.",
             "date": "2024-06-01T00:00:00Z",
             "imgUrl": "",
             "likes": 0,
-            "comments": []
+            "liked": false,
+            "comments": [
+                {
+                    "id": 1,
+                    "userId": 1,
+                    "postId": 1,
+                    "content": "jjj",
+                    "createdAt": "2024-06-01T00:00:00Z"
+                }
+            ]
         },
         {
-            "id": "10",
+            "id": 2,
             "userid": 2,
             "title": "Moonlight Sorcery",
             "body": "A spell gone wrong, and a world in peril.",
             "date": "2024-06-01T00:00:00Z",
             "imgUrl": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg",
             "likes": 0,
+            "liked": false,
             "comments": []
         },
         {
-            "id": "0",
+            "id": 3,
             "userid": 1,
             "title": "nn",
             "body": "nn",
             "date": "2025-07-24T09:46:23.872Z",
             "likes": 0,
+            "liked": false,
             "comments": [],
             "imgUrl": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         },
         {
-            "id": "0",
+            "id": 4,
             "userid": 1,
             "title": "nn",
             "body": "nn",
             "date": "2025-07-24T10:11:47.624Z",
             "likes": 0,
+            "liked": false,
             "comments": [],
             "imgUrl": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         },
         {
-            "id": "0",
+            "id": 5,
             "userid": 1,
             "title": "mmmmmmm",
             "body": "oooo",
             "date": "2025-07-24T10:12:14.470Z",
             "likes": 0,
+            "liked": false,
             "comments": [],
             "imgUrl": ""
         },
         {
-            "id": "0",
+            "id": 6,
             "userid": 1,
             "title": "mmmmmmm",
             "body": "oooo",
             "date": "2025-07-29T01:04:02.215Z",
             "likes": 0,
+            "liked": false,
             "comments": [],
             "imgUrl": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         },
         {
-            "id": "0",
+            "id": 7,
             "userid": 1,
             "title": "mmmmmmm",
             "body": "oooo",
             "date": "2025-07-29T01:52:45.756Z",
             "likes": 0,
+            "liked": false,
             "comments": [],
             "imgUrl": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         },
         {
-            "id": "0",
+            "id": 8,
             "userid": 1,
             "title": "fffffff",
             "body": "ff",
             "date": "2025-07-29T01:52:57.533Z",
             "likes": 0,
+            "liked": false,
             "comments": [],
             "imgUrl": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         },
         {
-            "id": 0,
+            "id": 9,
             "userid": 1,
             "title": "",
             "body": "",
             "date": "2025-07-29T07:01:01.885Z",
             "likes": 0,
+            "liked": false,
             "comments": [],
             "imgUrl": ""
+        },
+        {
+            "id": 10,
+            "userid": 1,
+            "title": "adham",
+            "body": "nadine",
+            "date": "2025-07-30T09:46:07.773Z",
+            "likes": 0,
+            "liked": false,
+            "comments": [],
+            "imgUrl": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         }
     ],
     "users": [
         {
-            "id": 1,
+            "id": "1",
             "name": "Adham",
             "password": "password",
             "profilePic": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         },
         {
-            "id": 2,
+            "id": "2",
             "name": "Nadine",
             "password": "password",
             "profilePic": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         },
         {
-            "id": 3,
+            "id": "3",
             "name": "Mohamed",
             "password": "password",
             "profilePic": "https://i.pinimg.com/736x/e0/be/7e/e0be7e4dfccaefcaed990a228ed24fed.jpg"
         }
-        
     ]
 }
