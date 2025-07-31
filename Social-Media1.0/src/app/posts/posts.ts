@@ -4,7 +4,6 @@ import { PostService } from '../services/post-service';
 import { Comment } from '../models/comment.model';
 import { UserService } from '../services/user-service';
 import { User } from '../models/user.model';
-import { Observable } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
@@ -15,27 +14,9 @@ import { ChangeDetectorRef } from '@angular/core';
 })
 export class Posts implements OnInit {
   posts: Post[] = [];
-<<<<<<< HEAD
-  newPost: Post = {} as Post;
-
-  constructor(private postService: PostService, private userService: UserService) {
-    this.initializeNewPost();
-  }
-
-  private initializeNewPost(): void {
-    this.newPost = {
-      id: 0,
-      userid: this.getCurrentUserId(),
-      title: '',
-      body: '',
-      date: new Date(),
-      likes: 0,
-      comments: [],
-      imgUrl: ''
-    };
-  }
-=======
+  users: User[] = []; // Store all users
   newPost!: Post;
+  newComment!: Comment;
   selectedPost !: Post;
 
   constructor(
@@ -43,11 +24,10 @@ export class Posts implements OnInit {
     private userService: UserService,
     private cdr: ChangeDetectorRef
   ) { }
->>>>>>> 18059d8f4308d52cb819a7b2e5ad309fc98f8a21
 
   ngOnInit(): void {
     this.newPost = {
-      id: 0,
+      _id: '',
       userid: this.getCurrentUserId(),
       title: '',
       body: '',
@@ -57,93 +37,163 @@ export class Posts implements OnInit {
       comments: [],
       imgUrl: ''
     };
+    this.newComment = {
+      id: 0,
+      content: '',
+      postId: '',
+      userId: '',
+      createdAt: new Date().toISOString()
+    };
 
-    this.loadPosts();
+    // Load users first, then posts
+    this.loadUsersAndPosts();
   }
 
-  loadPosts(): void {
-    this.postService.getApiPosts().subscribe((data) => {
-      this.posts = data;
-      console.log(this.posts)
-      this.cdr.detectChanges();
+  // Load all users first, then load posts
+  loadUsersAndPosts(): void {
+    console.log('Loading users first...');
+    this.userService.getUsers().subscribe({
+      next: (users) => {
+        this.users = users;
+        console.log('Users loaded:', this.users);
+        
+        // After users are loaded, load posts
+        this.loadPosts();
+      },
+      error: (error) => {
+        console.error('Error loading users:', error);
+        // Load posts anyway even if users fail
+        this.loadPosts();
+      }
     });
   }
 
-  deletePost(id: number): void {
+  loadPosts(): void {
+    console.log('Loading posts...');
+    this.postService.getApiPosts().subscribe({
+      next: (data) => {
+        this.posts = data;
+        console.log('Posts loaded successfully:', this.posts);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading posts:', error);
+      }
+    });
+  }
+
+  deletePost(id: string): void {
     this.postService.deleteApiPost(id).subscribe(() => {
       this.loadPosts();
     });
   }
 
   addPost(): void {
-    this.postService.addApiPost(this.newPost).subscribe(() => {
-      this.loadPosts();
-      // Reset form
-      this.newPost = {
-        ...this.newPost,
-        title: '',
-        body: '',
-        date: new Date()
-      };
+    console.log('Attempting to add post:', this.newPost);
+    this.postService.addApiPost(this.newPost).subscribe({
+      next: (response) => {
+        console.log('Post added successfully:', response);
+        this.loadPosts();
+        // Reset form
+        this.newPost = {
+          ...this.newPost,
+          title: '',
+          body: '',
+          date: new Date()
+        };
+      },
+      error: (error) => {
+        console.error('Error adding post:', error);
+        alert('Error adding post: ' + (error.error?.message || error.message));
+      }
     });
   }
 
-  updatePost(id: number, post: Post): void {
+  updatePost(id: string, post: Post): void {
     this.postService.updateApiPost(id, post).subscribe(() => {
       this.loadPosts();
     });
   }
 
-  // toggleLike(postId: number): void {
-  //   const likeIcon = document.getElementById(postId.toString());
-  //   if (likeIcon) {
-  //     likeIcon.classList.toggle('fa-regular');
-  //     likeIcon.classList.toggle('fa-solid');
-  //     this.postService.addApiLike(postId).subscribe();
-  //   }
-  // }
-
   toggleLike(post: Post): void {
-  post.liked = !post.liked;
+    post.liked = !post.liked;
 
-  if (post.liked) {
-    post.likes += 1;
-    this.postService.addApiLike(post.id).subscribe();  
-  } else {
-    post.likes -= 1;
-    this.postService.removeApiLike(post.id).subscribe();
+    if (post.liked) {
+      post.likes += 1;
+      this.postService.addApiLike(post._id).subscribe();  
+    } else {
+      post.likes -= 1;
+      this.postService.removeApiLike(post._id).subscribe();
+    }
   }
-}
 
-
-
-  showComments(postId: number): Observable<Comment[]> {
-    return this.postService.getApiComments(postId);
+  showComments(postId: string): Comment[] {
+    return this.getComments(postId);
   }
 
   addComment(): void {
-    const postId = this.selectedPost.id
-    const commentInput = document.getElementById("comment") as HTMLInputElement;
-    const content = commentInput?.value;
-    console.log("comment:", content)
-    if (content) {
-      this.postService.addApiComment(postId, content, this.getCurrentUserId());
-      commentInput.value = '';
+    const postId = this.selectedPost._id
+    console.log("comment:", this.newComment.content)
+    if (this.newComment.content) {
+      const comment: Comment = {
+        id: 0,
+        content: this.newComment.content,
+        postId: postId,
+        userId: this.getCurrentUserId(),
+        createdAt: new Date().toISOString()
+      }
+      this.postService.addApiComment(postId, comment).subscribe({
+        next: (response) => {
+          console.log('Comment added successfully:', response);
+          this.newComment.content = '';
+          // Reload posts to get updated comments and refresh user cache
+          this.loadPosts();
+        },
+        error: (error) => {
+          console.error('Error adding comment:', error);
+        }
+      });
     }
-   
-    
+    this.cdr.detectChanges();
+  }
+
+  getComments(postId: string): Comment[] {
+    const post = this.posts.find(post => post._id === postId);
+    return post ? post.comments : [];
+  }
+
+  // Search function to find user by ID from loaded users
+  findUserById(userId: string): User | null {
+    const user = this.users.find(user => user._id === userId);
+    return user || null;
+  }
+
+  // Get user image by searching through loaded users
+  getUserImg(userId: string): string {
+    const user = this.findUserById(userId);
+    return user?.profilePic || '';
+  }
+
+  // Get username by searching through loaded users  
+  getUserName(userId: string): string {
+    const user = this.findUserById(userId);
+    return user?.name || 'Unknown User';
   }
 
   formatDate(dateString: string): string {
     return this.postService.formatDate(dateString);
   }
 
-  getCurrentUserId(): number {
-    const loggedUser = this.userService.getLoggedInUser();
-    return loggedUser?.id ?? 1;
+  getCurrentUserId(): string {
+    return this.userService.getLoggedInUserId();
   }
 
   getLoggedUser(): User | null {
     return this.userService.getLoggedInUser();
+  }
+
+  getProfilePic(): string {
+    const loggedUser = this.userService.getLoggedInUser();
+    return loggedUser?.profilePic ?? '';
   }
 }

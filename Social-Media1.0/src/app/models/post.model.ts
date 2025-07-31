@@ -1,11 +1,13 @@
+import { Comment } from './comment.model';
+
 export interface Post{
-    id:number
-    userid:number
+    _id:string
+    userid:string
     title:string
     body:string
     date: Date
     likes:number
     liked: boolean
-    comments:string[]
+    comments: Comment[]
     imgUrl:string
 }

@@ -13,6 +13,7 @@ export class Login {
   loginForm: FormGroup;
   showPassword: boolean = false;
   loginError: string = '';
+  isLoading: boolean = false; // Add loading state
   
   constructor(private fb: FormBuilder, private userService: UserService, private router: Router) {
     this.loginForm = this.fb.group({
@@ -27,20 +28,31 @@ export class Login {
 
   login(): void {
     this.loginError = '';
+    this.isLoading = true;
 
     this.loginForm.markAllAsTouched();
 
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      const loggedUser = this.userService.login(username, password);
-      if(loggedUser){
-        this.userService.setLoggedInUser(loggedUser);
-        this.router.navigate(['/']);
-      }else{
-        this.loginError = 'Invalid username or password. Please try again.';
-      }
+      
+      // Properly handle the async login response
+      this.userService.login(username, password).subscribe({
+        next: (response) => {
+          console.log('Login successful:', response);
+          // The user and token are already set in the service via tap operator
+          // Navigate to home page
+          this.router.navigate(['/']);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Login failed:', error);
+          this.loginError = error.error?.message || 'Invalid username or password. Please try again.';
+          this.isLoading = false;
+        }
+      });
     } else {
       this.loginError = 'Please fill in all required fields correctly.';
+      this.isLoading = false;
     }
   }
 }

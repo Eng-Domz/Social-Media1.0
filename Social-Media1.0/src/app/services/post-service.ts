@@ -1,86 +1,104 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { Post } from '../models/post.model';
-import {Comment} from '../models/comment.model';
+import { Comment } from '../models/comment.model';
+import { UserService } from './user-service';
 
+// Backend response interfaces
+interface PostsResponse {
+  posts: Post[];
+}
+
+interface PostResponse {
+  post: Post;
+}
+
+interface LikesResponse {
+  likes: number;
+}
+
+interface CommentsResponse {
+  comments: Comment[];
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
-  private apiUrl = 'http://localhost:3000/posts';
-  constructor(private http:HttpClient){}
+  private apiUrl = 'http://localhost:8000/posts';  // Fixed: Changed from 3000 to 8000, removed /api
+  
+  constructor(private http: HttpClient, private userService: UserService) {}
+
+  // Helper method to get headers with authorization
+  private getHeaders(): HttpHeaders {
+    const authHeaders = this.userService.getAuthHeaders();
+    return new HttpHeaders(authHeaders);
+  }
 
   getApiPosts(): Observable<Post[]> {
-    return this.http.get<Post[]>(this.apiUrl);
+    return this.http.get<PostsResponse>(this.apiUrl, { headers: this.getHeaders() })
+      .pipe(
+        map(response => response.posts) // Extract posts array from response
+      );
   }
 
-  getApiPost(id:number): Observable<Post> {
-    return this.http.get<Post>(`${this.apiUrl}/${id}`);
+  getApiPost(id: string): Observable<Post> {
+    return this.http.get<PostResponse>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
+      .pipe(
+        map(response => response.post) // Extract post from response
+      );
   }
 
-  addApiPost(post:Post): Observable<Post> {
-    return this.http.post<Post>(this.apiUrl, post);
+  addApiPost(post: Post): Observable<Post> {
+    return this.http.post<PostResponse>(this.apiUrl, post, { headers: this.getHeaders() })
+      .pipe(
+        map(response => response.post) // Extract post from response
+      );
   }
 
-  updateApiPost(id:number, post:Post): Observable<Post> {
-    return this.http.put<Post>(`${this.apiUrl}/${id}`, post);
+  updateApiPost(id: string, post: Post): Observable<Post> {
+    return this.http.put<PostResponse>(`${this.apiUrl}/${id}`, post, { headers: this.getHeaders() })
+      .pipe(
+        map(response => response.post) // Extract post from response
+      );
   }
 
-  deleteApiPost(id:number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteApiPost(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
-  getApiComments(postId:number): Observable<Comment[]> { //make separate commentService
-    return this.http.get<Comment[]>(`${this.apiUrl}/${postId}/comments`);
+  // Like/Unlike methods
+  addApiLike(postId: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${postId}/likes`, {}, { headers: this.getHeaders() });
   }
 
-  addApiComment(postId: number, comment: string, userId: number): void {
-  this.getApiComments(postId).subscribe((comments) => {
-    const newComment: Comment = {
-      id: comments.length + 1, // or better: use backend auto-increment
-      userId: userId,
-      postId: postId,
-      content: comment,
-      createdAt: new Date().toISOString()
-    };
-
-    this.http.post<Comment>(`${this.apiUrl}/${postId}/comments`, newComment).subscribe();
-  });
-}
-// addApiComment(postId: number, content: string, userId: number): Observable<any> {
-//   const commentData = {
-//     content,
-//     userId,
-//     postId
-//   };
-
-//   return this.http.post(`${this.apiUrl}/${postId}/comments`, commentData);
-// }
-
-
-
-  getApiLikes(postId:number): Observable<number> { //separate likes service
-    return this.http.get<number>(`${this.apiUrl}/${postId}/likes`);
-  }
-  addApiLike(postId:number): Observable<number> {
-    return this.http.post<number>(`${this.apiUrl}/${postId}/likes`, {});
+  removeApiLike(postId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${postId}/likes`, { headers: this.getHeaders() });
   }
 
-  removeApiLike(postId:number){
-    return this.http.delete<number>(`${this.apiUrl}/${postId}/likes`, {});
+  getApiLikes(postId: string): Observable<number> { 
+    return this.http.get<LikesResponse>(`${this.apiUrl}/${postId}/likes`, { headers: this.getHeaders() })
+      .pipe(
+        map(response => response.likes) // Extract likes number from response
+      );
   }
 
+  // Comment methods
+  addApiComment(postId: string, comment: Comment): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${postId}/comments`, comment, { headers: this.getHeaders() });
+  }
 
+  getApiComments(postId: string): Observable<Comment[]> {
+    return this.http.get<CommentsResponse>(`${this.apiUrl}/${postId}/comments`, { headers: this.getHeaders() })
+      .pipe(
+        map(response => response.comments) // Extract comments array from response
+      );
+  }
+
+  // Utility method for date formatting
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    
-    return `${hours}:${minutes} ${day}/${month}/${year}`;
+    return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString();
   }
 }

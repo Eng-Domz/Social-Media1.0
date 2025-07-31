@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
     userid: {
-        type: Number,
+        type: String,  // Changed from Number to String to match MongoDB ObjectId
         required: true
     },
     title: {
@@ -29,8 +29,7 @@ const postSchema = new mongoose.Schema({
         required: true
     },
     imgUrl:{
-        type: String,
-        required: true
+        type: String
     }
 }, {timestamps: true})
 module.exports = mongoose.model('Post', postSchema);

@@ -9,9 +9,8 @@ export class LoginGuard implements CanActivate {
   constructor(private userService: UserService, private router: Router) {}
 
   canActivate(): boolean {
-    const loggedInUser = this.userService.getLoggedInUser();
-    
-    if (loggedInUser) {
+    // Use the new isLoggedIn method which checks both user and token
+    if (this.userService.isLoggedIn()) {
       console.log('User is already logged in');
       this.router.navigate(['/']); 
       return false; 
