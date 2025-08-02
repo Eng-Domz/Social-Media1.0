@@ -8,11 +8,37 @@
         </div>
     </div>
 
+    <!-- Search Results Info -->
+    <div *ngIf="isSearchActive()" class="w-100 d-flex justify-content-center mb-3">
+        <div class="alert alert-info d-flex align-items-center justify-content-between" style="max-width: 600px; width: 100%;">
+            <div>
+                <i class="fa-solid fa-search me-2"></i>
+                Search results for "<strong>{{searchQuery}}</strong>" - {{getSearchResultsCount()}} post(s) found
+            </div>
+            <button class="btn btn-sm btn-outline-primary" (click)="clearSearch()">
+                <i class="fa-solid fa-xmark me-1"></i>Clear
+            </button>
+        </div>
+    </div>
 
-    <div class="container" *ngIf="posts.length > 0">
-        <div *ngFor="let post of posts" class="w-100 d-flex justify-content-center mb-4">
+    <!-- No Results Message -->
+    <div *ngIf="isSearchActive() && getSearchResultsCount() === 0" class="w-100 d-flex justify-content-center mb-4">
+        <div class="alert alert-warning text-center" style="max-width: 600px; width: 100%;">
+            <i class="fa-solid fa-search fa-2x mb-2"></i>
+            <h5>No posts found</h5>
+            <p>No posts match your search criteria for "<strong>{{searchQuery}}</strong>"</p>
+            <button class="btn btn-primary" (click)="clearSearch()">Show All Posts</button>
+        </div>
+    </div>
+
+    <div class="container" *ngIf="getPostsToDisplay().length > 0">
+        <div *ngFor="let post of getPostsToDisplay()" class="w-100 d-flex justify-content-center mb-4">
             <div class="card rounded-3 border-1 shadow-sm p-2 " style="width: 100%; max-width: 600px;">
-                <app-user-data [userid]="post.userid" [date]="post.date"></app-user-data>
+                <!-- Clickable user data with search functionality -->
+                <div class="user-data-clickable" (click)="searchByUserId(post.userid)" title="Click to see posts by this user">
+                    <app-user-data [userid]="post.userid" [date]="post.date"></app-user-data>
+                </div>
+                
                 <div class="card-body">
                     <p class="card-title fw-bold">{{ post.title }}</p>
                     <p class="card-text">{{ post.body }}</p>
@@ -40,24 +66,30 @@
                         {{post.comments.length}} comments
                     </div>
                 </div>
+
+                <!-- Comments Section -->
+                <div class="comments mt-3" *ngFor="let comm of getComments(post._id)">
+                    <div class="user d-flex align-items-center position-relative">
+                        <img [src]="getUserImg(comm.userId)" class="imgg rounded-circle" width="40" height="40">
+                        <div class="ms-2 bg-light w-100 rounded-1 p-1">
+                            <!-- Clickable username in comments -->
+                            <p class="mb-0 fw-bold username-clickable" 
+                               (click)="searchByUserId(comm.userId)"
+                               title="Click to see posts by {{getUserName(comm.userId)}}">
+                               {{getUserName(comm.userId)}}
+                            </p>
+                            <div class=" ">
+                                {{comm.content}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="d-flex justify-content-center gap-2">
                     <input type="text" class="form-control" placeholder="Add a comment" [(ngModel)]="newComment.content" (input)="selectedPost=post">
                     <button class="btn btn-primary" (click)="addComment()" >
                         <i class="fa-regular fa-paper-plane me-1" 
                        style="transform: rotate(45deg);"></i>
                     </button>
-                </div>
-
-                <div class="comments mt-3" *ngFor="let comm of getComments(post._id)">
-                    <div class="user d-flex align-items-center position-relative">
-                        <img [src]="getUserImg(comm.userId)" class="imgg rounded-circle" width="40" height="40">
-                        <div class="ms-2 bg-light w-100 rounded-1 p-1">
-                            <p class="mb-0 fw-bold">{{getUserName(comm.userId)}}</p>
-                            <div class=" ">
-                                {{comm.content}}
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
             </div>

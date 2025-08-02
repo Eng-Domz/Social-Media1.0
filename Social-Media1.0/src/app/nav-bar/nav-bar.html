@@ -1,22 +1,74 @@
-<div *ngIf="userService.isLoggedIn()">
-<nav class="navbar navbar-expand-lg p-2" >
-  <div class="container-fluid">
-    <a >
-      <img [src]="userService.getLoggedInUser()?.profilePic" alt=""
-        class="imgg rounded-circle" width="50" height="50" >
-      </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
-        <li class="nav-item d-flex flex-row  align-items-center">
-          <button class="nav-link bg-transparent border-0 text-dark" (click)="userService.logout()"><i
-              class="fa-solid fa-arrow-right-from-bracket"></i></button>
-        </li>
-      </ul>
+<div *ngIf="isLoggedIn()">
+  <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
+    <div class="container-fluid px-4">
+      <!-- Left side: Logo/Brand and User Info -->
+      <div class="d-flex align-items-center">
+        <!-- Brand/Logo -->
+        <a class="navbar-brand d-flex align-items-center me-4">
+          <i class="fa-solid fa-comments brand-icon me-2"></i>
+          <span class="brand-text">ConnectHub</span>
+        </a>
+        
+        <!-- User Profile Section -->
+        <div class="user-profile d-flex align-items-center">
+          <img [src]="getProfilePic()" alt="Profile" 
+               class="profile-img rounded-circle me-2" 
+               width="40" height="40">
+          <div class="user-info d-none d-md-block">
+            <div class="username">{{getUserName()}}</div>
+            <div class="user-status">Online</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile toggle button -->
+      <button class="navbar-toggler custom-toggler" type="button" 
+              data-bs-toggle="collapse" data-bs-target="#navbarContent"
+              aria-controls="navbarContent" aria-expanded="false" 
+              aria-label="Toggle navigation">
+        <span class="toggler-icon"></span>
+        <span class="toggler-icon"></span>
+        <span class="toggler-icon"></span>
+      </button>
+
+      <!-- Right side: Navigation and Actions -->
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ms-auto d-flex align-items-center">
+          <!-- Search -->
+          <li class="nav-item me-3 d-none d-lg-block">
+            <div class="search-container">
+              <i class="fa-solid fa-search search-icon"></i>
+              <input type="text" 
+                     class="search-input" 
+                     placeholder="Search by username or user ID..."
+                     [(ngModel)]="searchQuery"
+                     (input)="onSearchInput($event)"
+                     (keypress)="onSearchKeyPress($event)">
+              <button *ngIf="searchQuery" 
+                      class="clear-search-btn" 
+                      (click)="clearSearch()"
+                      title="Clear search">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </li>
+          
+          <li class="nav-item me-3">
+            <div class="nav-divider"></div>
+          </li>
+          
+          <!-- Logout -->
+          <li class="nav-item">
+            <button class="nav-btn logout-btn" (click)="logout()" title="Logout">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+              <span class="d-md-none ms-2">Logout</span>
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
+  
+  <!-- Spacer to prevent content from going under fixed navbar -->
+  <div class="navbar-spacer"></div>
 </div>

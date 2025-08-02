@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Post } from '../models/post.model';
 import { PostService } from '../services/post-service';
 import { Comment } from '../models/comment.model';
 import { UserService } from '../services/user-service';
 import { User } from '../models/user.model';
 import { ChangeDetectorRef } from '@angular/core';
+import { SearchService } from '../services/search.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-posts',
@@ -12,17 +14,21 @@ import { ChangeDetectorRef } from '@angular/core';
   templateUrl: './posts.html',
   styleUrls: ['./posts.css']
 })
-export class Posts implements OnInit {
+export class Posts implements OnInit, OnDestroy {
   posts: Post[] = [];
+  filteredPosts: Post[] = []; // For search results
   users: User[] = []; // Store all users
   newPost!: Post;
   newComment!: Comment;
   selectedPost !: Post;
+  searchQuery: string = '';
+  private searchSubscription!: Subscription;
 
   constructor(
     private postService: PostService,
     private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private searchService: SearchService
   ) { }
 
   ngOnInit(): void {
@@ -45,8 +51,19 @@ export class Posts implements OnInit {
       createdAt: new Date().toISOString()
     };
 
+    // Subscribe to search queries
+    this.searchSubscription = this.searchService.searchQuery$.subscribe(query => {
+      this.onSearch(query);
+    });
+
     // Load users first, then posts
     this.loadUsersAndPosts();
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
   }
 
   // Load all users first, then load posts
@@ -73,13 +90,92 @@ export class Posts implements OnInit {
     this.postService.getApiPosts().subscribe({
       next: (data) => {
         this.posts = data;
+        this.filteredPosts = [...data]; // Initialize filtered posts with all posts
         console.log('Posts loaded successfully:', this.posts);
+        
+        // Apply current search if exists
+        const currentSearch = this.searchService.getCurrentSearchQuery();
+        if (currentSearch) {
+          this.onSearch(currentSearch);
+        }
+        
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading posts:', error);
       }
     });
+  }
+
+  // Search functionality
+  onSearch(searchQuery: string): void {
+    this.searchQuery = searchQuery.toLowerCase().trim();
+    this.filterPosts();
+  }
+
+  private filterPosts(): void {
+    if (!this.searchQuery) {
+      // If no search query, show all posts
+      this.filteredPosts = [...this.posts];
+    } else {
+      this.filteredPosts = this.posts.filter(post => {
+        // Search by user ID
+        if (post.userid.toLowerCase().includes(this.searchQuery)) {
+          return true;
+        }
+        
+        // Search by username
+        const user = this.findUserById(post.userid);
+        if (user && user.name.toLowerCase().includes(this.searchQuery)) {
+          return true;
+        }
+        
+        // Search by post title
+        if (post.title.toLowerCase().includes(this.searchQuery)) {
+          return true;
+        }
+        
+        // Search by post content
+        if (post.body.toLowerCase().includes(this.searchQuery)) {
+          return true;
+        }
+        
+        return false;
+      });
+    }
+    
+    console.log(`Search for "${this.searchQuery}" found ${this.filteredPosts.length} posts`);
+    this.cdr.detectChanges();
+  }
+
+  // Method to get posts to display (filtered or all)
+  getPostsToDisplay(): Post[] {
+    return this.filteredPosts;
+  }
+
+  // Get search results count for display
+  getSearchResultsCount(): number {
+    return this.filteredPosts.length;
+  }
+
+  // Check if search is active
+  isSearchActive(): boolean {
+    return this.searchQuery.length > 0;
+  }
+
+  // Search by specific user ID
+  searchByUserId(userId: string): void {
+    this.searchService.updateSearchQuery(userId);
+  }
+
+  // Search by username
+  searchByUsername(username: string): void {
+    this.searchService.updateSearchQuery(username);
+  }
+
+  // Clear search and show all posts
+  clearSearch(): void {
+    this.searchService.clearSearch();
   }
 
   deletePost(id: string): void {
